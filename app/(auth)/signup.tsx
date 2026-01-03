@@ -176,7 +176,7 @@ const SignupPage = () => {
 
           <View style={styles.signupContainer}>
             <Text style={styles.signupText}>Already have an account? </Text>
-            <Link href="/login" asChild>
+            <Link href={"/login" as Href} asChild>
               <TouchableOpacity disabled={loading}>
                 <Text style={styles.signupLink}>Sign In</Text>
               </TouchableOpacity>
