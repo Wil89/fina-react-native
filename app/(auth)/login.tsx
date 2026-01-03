@@ -1,3 +1,4 @@
+import PasswordTextInput from "@/components/password-text-input";
 import { supabase } from "@/utils/supabase";
 import { Href, Link, useRouter } from "expo-router";
 import { useState } from "react";
@@ -76,7 +77,7 @@ const LoginPage = () => {
             editable={!loading}
           />
 
-          <TextInput
+          <PasswordTextInput
             style={styles.input}
             placeholder="Password"
             placeholderTextColor="#999"

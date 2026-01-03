@@ -1,3 +1,4 @@
+import PasswordTextInput from "@/components/password-text-input";
 import { supabase } from "@/utils/supabase";
 import { Href, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -8,7 +9,6 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -108,7 +108,7 @@ const ResetPasswordPage = () => {
         <Text style={styles.subtitle}>Enter your new password below</Text>
 
         <View style={styles.form}>
-          <TextInput
+          <PasswordTextInput
             style={styles.input}
             placeholder="New Password"
             placeholderTextColor="#999"
@@ -121,7 +121,7 @@ const ResetPasswordPage = () => {
             editable={!loading}
           />
 
-          <TextInput
+          <PasswordTextInput
             style={styles.input}
             placeholder="Confirm New Password"
             placeholderTextColor="#999"
