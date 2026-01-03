@@ -2,57 +2,56 @@ import { supabase } from "@/utils/supabase";
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { z } from "zod";
 
-const emailSchema = z.email({
-  pattern:
-    /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i,
-});
+const passwordSchema = z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 
-const ForgotPasswordPage = () => {
+const ResetPasswordPage = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleResetPassword = async () => {
+  const handleUpdatePassword = async () => {
     // Validation
-    if (!email) {
-      Alert.alert("Error", "Please enter your email address");
+    if (!password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    if (!emailSchema.safeParse(email).success) {
-      Alert.alert("Error", "Please enter a valid email");
+    if (!passwordSchema.safeParse(password).success) {
+      Alert.alert("Error", "Password must be at least 8 characters long");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
       return;
     }
 
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(
-        email.trim(),
-        {
-          redirectTo: `${process.env.EXPO_PUBLIC_SUPABASE_REDIRECT_URL}://reset-password`,
-        }
-      );
+      const { error } = await supabase.auth.updateUser({
+        password: password,
+      });
 
       if (error) {
         Alert.alert("Error", error.message);
       } else {
-        // Success - show message and redirect
         Alert.alert(
-          "Check Your Email",
-          "We've sent you a password reset link. Please check your email and follow the instructions.",
+          "Success",
+          "Your password has been reset successfully. Please login with your new password.",
           [
             {
               text: "OK",
@@ -75,44 +74,49 @@ const ForgotPasswordPage = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Reset Password</Text>
+        <Text style={styles.title}>Set New Password</Text>
         <Text style={styles.subtitle}>
-          Enter your email and we&apos;ll send you a link to reset your password
+          Enter your new password below
         </Text>
 
         <View style={styles.form}>
           <TextInput
             style={styles.input}
-            placeholder="Email"
+            placeholder="New Password"
             placeholderTextColor="#999"
-            value={email}
-            onChangeText={setEmail}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
             autoCapitalize="none"
             autoCorrect={false}
-            keyboardType="email-address"
-            textContentType="emailAddress"
+            textContentType="newPassword"
             editable={!loading}
-            onSubmitEditing={handleResetPassword}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm New Password"
+            placeholderTextColor="#999"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="newPassword"
+            editable={!loading}
+            onSubmitEditing={handleUpdatePassword}
           />
 
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleResetPassword}
+            onPress={handleUpdatePassword}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Send Reset Link</Text>
+              <Text style={styles.buttonText}>Update Password</Text>
             )}
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-            disabled={loading}
-          >
-            <Text style={styles.backButtonText}>Back to Login</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -175,16 +179,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
   },
-  backButton: {
-    width: "100%",
-    height: 56,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  backButtonText: {
-    color: "#007AFF",
-    fontSize: 16,
-  },
 });
 
-export default ForgotPasswordPage;
+export default ResetPasswordPage;

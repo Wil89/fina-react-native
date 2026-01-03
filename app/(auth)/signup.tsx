@@ -21,18 +21,27 @@ const signupSchema = z
         /^(?!\.)(?!.*\.\.)([a-z0-9_'+\-\.]*)[a-z0-9_+-]@([a-z0-9][a-z0-9\-]*\.)+[a-z]{2,}$/i,
     }),
     password: z.string().min(8),
+    username: z.string().min(3),
+    fullName: z.string().min(3),
   })
   .required();
 
 const SignupPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async () => {
     try {
-      const validatedData = signupSchema.parse({ email, password });
+      const validatedData = signupSchema.parse({
+        email,
+        password,
+        username,
+        fullName,
+      });
 
       if (!validatedData) {
         Alert.alert("Error", "Please fill in all fields");
@@ -46,16 +55,50 @@ const SignupPage = () => {
         password: validatedData.password,
         options: {
           emailRedirectTo: process.env.EXPO_PUBLIC_SUPABASE_REDIRECT_URL!,
+          data: {
+            username: validatedData.username,
+            full_name: validatedData.fullName,
+          },
         },
       });
 
       if (error) {
         Alert.alert("Error", error.message);
-      } else if (data.user && !error) {
-        router.replace("/dashboard" as Href);
+        setLoading(false);
+        return;
+      }
+
+      if (data.user && !data.session) {
+        // Email confirmation is required
+        Alert.alert(
+          "Verification Email Sent",
+          "Please check your email and click the verification link to activate your account.",
+          [
+            {
+              text: "OK",
+              onPress: () => router.replace("/login" as Href),
+            },
+          ]
+        );
+      } else if (data.session) {
+        // User is automatically logged in (email confirmation disabled)
+        Alert.alert("Success", "Account created successfully!", [
+          {
+            text: "OK",
+            onPress: () => router.replace("/dashboard" as Href),
+          },
+        ]);
       }
     } catch (error) {
-      Alert.alert("Error", "An unexpected error occurred");
+      if (error instanceof z.ZodError) {
+        // Handle validation errors
+        const firstError = error.issues[0];
+        Alert.alert("Validation Error", firstError.message);
+      } else {
+        Alert.alert("Error", "An unexpected error occurred");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +112,28 @@ const SignupPage = () => {
         <Text style={styles.subtitle}>Create an account to get started</Text>
 
         <View style={styles.form}>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            placeholderTextColor="#999"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="username"
+            editable={!loading}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Full Name"
+            placeholderTextColor="#999"
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="none"
+            autoCorrect={false}
+            textContentType="name"
+            editable={!loading}
+          />
           <TextInput
             style={styles.input}
             placeholder="Email"
