@@ -1,35 +1,59 @@
 import { supabase } from "@/utils/supabase";
 import { Href, useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    KeyboardAvoidingView,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { z } from "zod";
-
-const passwordSchema = z.string().min(8).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/);
 
 const ResetPasswordPage = () => {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    // Check if user has a session
+    const checkSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        Alert.alert(
+          "Error",
+          "Invalid or expired reset link. Please request a new one.",
+          [
+            {
+              text: "OK",
+              onPress: () => router.replace("/forgot-password" as Href),
+            },
+          ]
+        );
+      } else {
+        setChecking(false);
+      }
+    };
+
+    // Small delay to let the linking handler set the session
+    setTimeout(checkSession, 500);
+  }, [router]);
 
   const handleUpdatePassword = async () => {
-    // Validation
     if (!password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
 
-    if (!passwordSchema.safeParse(password).success) {
+    if (password.length < 8) {
       Alert.alert("Error", "Password must be at least 8 characters long");
       return;
     }
@@ -49,16 +73,11 @@ const ResetPasswordPage = () => {
       if (error) {
         Alert.alert("Error", error.message);
       } else {
-        Alert.alert(
-          "Success",
-          "Your password has been reset successfully. Please login with your new password.",
-          [
-            {
-              text: "OK",
-              onPress: () => router.replace("/login" as Href),
-            },
-          ]
-        );
+        await supabase.auth.signOut();
+
+        Alert.alert("Success", "Your password has been reset successfully!", [
+          { text: "OK", onPress: () => router.replace("/login" as Href) },
+        ]);
       }
     } catch (error) {
       Alert.alert("Error", "An unexpected error occurred");
@@ -68,6 +87,17 @@ const ResetPasswordPage = () => {
     }
   };
 
+  if (checking) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <Text style={styles.subtitle}>Verifying reset link...</Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -75,9 +105,7 @@ const ResetPasswordPage = () => {
     >
       <View style={styles.content}>
         <Text style={styles.title}>Set New Password</Text>
-        <Text style={styles.subtitle}>
-          Enter your new password below
-        </Text>
+        <Text style={styles.subtitle}>Enter your new password below</Text>
 
         <View style={styles.form}>
           <TextInput

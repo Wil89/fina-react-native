@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "nativefina",
-    "slug": "fina",
+    "slug": "nativefina",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "fina",
+    "scheme": "nativefina",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -23,7 +23,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.nativefina.app"
     },
     "web": {
       "output": "static",
