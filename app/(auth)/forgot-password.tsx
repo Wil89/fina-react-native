@@ -1,14 +1,13 @@
+import { Button, Input, Text } from "@/components/ui";
+import { useTheme } from "@/hooks/use-theme";
 import { supabase } from "@/utils/supabase";
 import { Href, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -21,6 +20,7 @@ const emailSchema = z.email({
 
 const ForgotPasswordPage = () => {
   const router = useRouter();
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -75,16 +75,21 @@ const ForgotPasswordPage = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Reset Password</Text>
-        <Text style={styles.subtitle}>
+        <Text variant="largeTitle" align="center" style={styles.title}>
+          Reset Password
+        </Text>
+        <Text
+          variant="body"
+          align="center"
+          color="secondary"
+          style={[styles.subtitle, { color: theme.colors.text }]}
+        >
           Enter your email and we&apos;ll send you a link to reset your password
         </Text>
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Email"
-            placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -95,24 +100,25 @@ const ForgotPasswordPage = () => {
             onSubmitEditing={handleResetPassword}
           />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
+          <Button
+            variant="primary"
+            fullWidth
             onPress={handleResetPassword}
-            disabled={loading}
+            loading={loading}
+            style={{ borderRadius: theme.radius.xxl }}
+            size="lg"
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Send Reset Link</Text>
-            )}
-          </TouchableOpacity>
+            Send Reset Link
+          </Button>
 
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.back()}
             disabled={loading}
           >
-            <Text style={styles.backButtonText}>Back to Login</Text>
+            <Text variant="callout" color="tint">
+              Back to Login
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -123,7 +129,6 @@ const ForgotPasswordPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   content: {
     flex: 1,

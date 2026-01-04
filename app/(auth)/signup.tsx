@@ -1,15 +1,14 @@
 import PasswordTextInput from "@/components/password-text-input";
+import { Button, Input, Text } from "@/components/ui";
+import { useTheme } from "@/hooks/use-theme";
 import { supabase } from "@/utils/supabase";
 import { Href, Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -29,6 +28,7 @@ const signupSchema = z
 
 const SignupPage = () => {
   const router = useRouter();
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
@@ -109,14 +109,20 @@ const SignupPage = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Create an Account</Text>
-        <Text style={styles.subtitle}>Create an account to get started</Text>
+        <Text variant="largeTitle" align="center" style={styles.title}>
+          Create an Account
+        </Text>
+        <Text
+          variant="body"
+          align="center"
+          style={[styles.subtitle, { color: theme.colors.text }]}
+        >
+          Create an account to get started
+        </Text>
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Username"
-            placeholderTextColor="#999"
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
@@ -124,10 +130,8 @@ const SignupPage = () => {
             textContentType="username"
             editable={!loading}
           />
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Full Name"
-            placeholderTextColor="#999"
             value={fullName}
             onChangeText={setFullName}
             autoCapitalize="none"
@@ -135,10 +139,8 @@ const SignupPage = () => {
             textContentType="name"
             editable={!loading}
           />
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Email"
-            placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -149,7 +151,14 @@ const SignupPage = () => {
           />
 
           <PasswordTextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.colors.secondaryBackground,
+                borderColor: theme.colors.border,
+                color: theme.colors.text,
+              },
+            ]}
             placeholder="Password"
             placeholderTextColor="#999"
             value={password}
@@ -162,23 +171,37 @@ const SignupPage = () => {
             onSubmitEditing={handleSignup}
           />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
+          <Button
+            variant="primary"
+            fullWidth
             onPress={handleSignup}
-            disabled={loading}
+            loading={loading}
+            style={{ borderRadius: theme.radius.xxl }}
+            size="lg"
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign Up</Text>
-            )}
-          </TouchableOpacity>
+            Sign Up
+          </Button>
 
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Already have an account? </Text>
+            <Text
+              variant="callout"
+              color="secondary"
+              style={{ marginTop: theme.spacing.sm }}
+            >
+              Already have an account?{" "}
+            </Text>
             <Link href={"/login" as Href} asChild>
               <TouchableOpacity disabled={loading}>
-                <Text style={styles.signupLink}>Sign In</Text>
+                <Text
+                  variant="callout"
+                  color="tint"
+                  style={{
+                    marginTop: theme.spacing.sm,
+                    marginLeft: theme.spacing.sm,
+                  }}
+                >
+                  Sign In
+                </Text>
               </TouchableOpacity>
             </Link>
           </View>
@@ -191,7 +214,7 @@ const SignupPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   content: {
     flex: 1,
@@ -207,7 +230,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
     marginBottom: 32,
   },
   form: {

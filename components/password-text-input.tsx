@@ -1,3 +1,4 @@
+import { Colors } from "@/theme/colors";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useState } from "react";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     position: "absolute",
-    color: "#999",
+    color: Colors.primary[500],
     right: 10,
     top: "50%",
     transform: [{ translateY: -20 }],

@@ -56,7 +56,7 @@ const LoginPage = () => {
 
   return (
     <KeyboardAvoidingView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={[styles.container]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
@@ -67,7 +67,7 @@ const LoginPage = () => {
           variant="body"
           align="center"
           color="secondary"
-          style={styles.subtitle}
+          style={[styles.subtitle, { color: theme.colors.text }]}
         >
           Sign in to your account
         </Text>
@@ -129,7 +129,7 @@ const LoginPage = () => {
           <View style={styles.signupContainer}>
             <Text
               variant="callout"
-              color="secondary"
+              color="primary"
               style={{ marginTop: theme.spacing.sm }}
             >
               Don&apos;t have an account?{" "}
@@ -158,7 +158,7 @@ const LoginPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "transparent",
   },
   content: {
     flex: 1,

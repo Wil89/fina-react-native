@@ -1,4 +1,6 @@
 import PasswordTextInput from "@/components/password-text-input";
+import { Button, Text } from "@/components/ui";
+import { useTheme } from "@/hooks/use-theme";
 import { supabase } from "@/utils/supabase";
 import { Href, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -8,13 +10,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
 const ResetPasswordPage = () => {
   const router = useRouter();
+  const theme = useTheme();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -92,7 +93,14 @@ const ResetPasswordPage = () => {
       <View style={styles.container}>
         <View style={styles.content}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.subtitle}>Verifying reset link...</Text>
+          <Text
+            variant="body"
+            align="center"
+            color="secondary"
+            style={styles.subtitle}
+          >
+            Verifying reset link...
+          </Text>
         </View>
       </View>
     );
@@ -104,14 +112,30 @@ const ResetPasswordPage = () => {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Set New Password</Text>
-        <Text style={styles.subtitle}>Enter your new password below</Text>
+        <Text variant="largeTitle" align="center" style={styles.title}>
+          Set New Password
+        </Text>
+        <Text
+          variant="body"
+          align="center"
+          color="secondary"
+          style={styles.subtitle}
+        >
+          Enter your new password below
+        </Text>
 
         <View style={styles.form}>
           <PasswordTextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.colors.secondaryBackground,
+                borderColor: theme.colors.border,
+                color: theme.colors.text,
+              },
+            ]}
             placeholder="New Password"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.placeholder}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -122,9 +146,16 @@ const ResetPasswordPage = () => {
           />
 
           <PasswordTextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.colors.secondaryBackground,
+                borderColor: theme.colors.border,
+                color: theme.colors.text,
+              },
+            ]}
             placeholder="Confirm New Password"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.placeholder}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
@@ -135,17 +166,16 @@ const ResetPasswordPage = () => {
             onSubmitEditing={handleUpdatePassword}
           />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
+          <Button
+            variant="primary"
+            fullWidth
             onPress={handleUpdatePassword}
-            disabled={loading}
+            loading={loading}
+            style={{ borderRadius: theme.radius.xxl }}
+            size="lg"
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Update Password</Text>
-            )}
-          </TouchableOpacity>
+            Update Password
+          </Button>
         </View>
       </View>
     </KeyboardAvoidingView>

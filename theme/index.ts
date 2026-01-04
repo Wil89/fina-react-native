@@ -1,9 +1,9 @@
-import { Colors, ColorScheme } from "./colors";
+import { Colors, ColorScheme, ThemeColors } from "./colors";
 import { Radius, Shadows, Spacing } from "./spacing";
 import { FontFamily, FontWeights, Typography } from "./typography";
 
 export const createTheme = (colorScheme: ColorScheme = "light") => ({
-  colors: colorScheme === "light" ? Colors.light : Colors.dark,
+  colors: colorScheme === "light" ? ThemeColors.light : ThemeColors.dark,
   colorScheme,
   palette: Colors,
   typography: Typography,
@@ -38,11 +38,13 @@ export const createTheme = (colorScheme: ColorScheme = "light") => ({
 export type Theme = ReturnType<typeof createTheme>;
 
 // Export individual modules
-export { Colors, ColorScheme } from "./colors";
+export { Colors, ColorScheme, ThemeColors } from "./colors";
 export { Radius, Shadows, ShadowSize, Spacing } from "./spacing";
 export {
-    FontFamily,
-    FontWeights, Typography, TypographyVariant
+  FontFamily,
+  FontWeights,
+  Typography,
+  TypographyVariant,
 } from "./typography";
 
 // Export default light theme

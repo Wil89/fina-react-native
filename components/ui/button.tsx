@@ -1,12 +1,12 @@
 import { useTheme } from '@/hooks/use-theme';
 import React from 'react';
 import {
-    ActivityIndicator,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableOpacityProps,
-    View,
-} from 'react-native';
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+} from "react-native";
 import { Text } from './text';
 
 interface ButtonProps extends TouchableOpacityProps {
