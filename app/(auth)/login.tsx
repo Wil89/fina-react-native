@@ -1,21 +1,21 @@
 import PasswordTextInput from "@/components/password-text-input";
+import { Button, Input, Text } from "@/components/ui";
+import { useTheme } from "@/hooks/use-theme";
 import { supabase } from "@/utils/supabase";
 import { Href, Link, useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 
 const LoginPage = () => {
   const router = useRouter();
+  const theme = useTheme();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -56,18 +56,25 @@ const LoginPage = () => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View style={styles.content}>
-        <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to your account</Text>
+        <Text variant="largeTitle" align="center" style={styles.title}>
+          Welcome Back
+        </Text>
+        <Text
+          variant="body"
+          align="center"
+          color="secondary"
+          style={styles.subtitle}
+        >
+          Sign in to your account
+        </Text>
 
         <View style={styles.form}>
-          <TextInput
-            style={styles.input}
+          <Input
             placeholder="Email"
-            placeholderTextColor="#999"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
@@ -78,9 +85,16 @@ const LoginPage = () => {
           />
 
           <PasswordTextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.colors.secondaryBackground,
+                borderColor: theme.colors.border,
+                color: theme.colors.text,
+              },
+            ]}
             placeholder="Password"
-            placeholderTextColor="#999"
+            placeholderTextColor={theme.colors.placeholder}
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -96,26 +110,42 @@ const LoginPage = () => {
             onPress={() => router.push("/forgot-password" as Href)}
             disabled={loading}
           >
-            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            <Text variant="callout" color="tint">
+              Forgot Password?
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
+          <Button
+            variant="primary"
+            fullWidth
             onPress={handleLogin}
-            disabled={loading}
+            loading={loading}
+            style={{ borderRadius: theme.radius.xxl }}
+            size="lg"
           >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
+            Sign In
+          </Button>
 
           <View style={styles.signupContainer}>
-            <Text style={styles.signupText}>Don&apos;t have an account? </Text>
+            <Text
+              variant="callout"
+              color="secondary"
+              style={{ marginTop: theme.spacing.sm }}
+            >
+              Don&apos;t have an account?{" "}
+            </Text>
             <Link href={"/signup" as Href} asChild>
               <TouchableOpacity disabled={loading}>
-                <Text style={styles.signupLink}>Sign Up</Text>
+                <Text
+                  variant="callout"
+                  color="tint"
+                  style={{
+                    marginTop: theme.spacing.sm,
+                    marginLeft: theme.spacing.sm,
+                  }}
+                >
+                  Sign Up
+                </Text>
               </TouchableOpacity>
             </Link>
           </View>
