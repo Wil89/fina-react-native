@@ -1,7 +1,9 @@
 import PasswordTextInput from "@/components/password-text-input";
 import { Button, Text } from "@/components/ui";
 import { useTheme } from "@/hooks/use-theme";
+import { Colors } from "@/theme/colors";
 import { supabase } from "@/utils/supabase";
+import { LinearGradient } from "expo-linear-gradient";
 import { Href, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -111,6 +113,12 @@ const ResetPasswordPage = () => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      <LinearGradient
+        colors={[Colors.gray[200], Colors.primary[300]]}
+        style={StyleSheet.absoluteFill}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+      />
       <View style={styles.content}>
         <Text variant="largeTitle" align="center" style={styles.title}>
           Set New Password
